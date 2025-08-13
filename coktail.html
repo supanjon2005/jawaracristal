@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pemesanan - Jawara Cristal</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1 class="logo">Jawara Cristal</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Beranda</a></li>
+                    <li><a href="index.html#produk">Produk</a></li>
+                    <li><a href="index.html#kontak">Kontak</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="order-section">
+        <div class="container">
+            <h2>Form Pemesanan</h2>
+            <div class="order-form">
+                <div class="product-info">
+                    <h3>Produk yang Dipilih</h3>
+                    <div class="product-details">
+                        <img src="poto produk/ARAK JIRIGEN.png" alt="Original Basic" />
+                        <div>
+                            <h4>Coktail Series</h4>
+                            <p>Harga: <span id="hargaProduk">Pilih paket untuk melihat harga</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="orderForm">
+                    <div class="form-group">
+                        <label>Variasi Paket Botol:</label>
+                                                 <div class="paket-container">
+                             <button type="button" onclick="pilihPaket(this)" data-paket="10 BTL" data-harga="170000">JERUK</button>
+                             <button type="button" onclick="pilihPaket(this)" data-paket="15 BTL" data-harga="255000">MANGGA</button>
+                             <button type="button" onclick="pilihPaket(this)" data-paket="24+1 BTL" data-harga="408000">COLA</button>
+                             <button type="button" onclick="pilihPaket(this)" data-paket="48+3 BTL" data-harga="799000">APEL</button>
+                             
+                         </div>
+                    </div>
+
+                                         <div class="form-group">
+                         <label>Pengemasan:</label>
+                         <div class="kemasan-container">
+                             <button type="button" onclick="pilihKemasan(this)" data-kemasan="Pengemasan biasa" data-biaya="0">Pengemasan biasa</button>
+                             <button type="button" onclick="pilihKemasan(this)" data-kemasan="Kawat" data-biaya="20000">Kawat</button>
+                             <button type="button" onclick="pilihKemasan(this)" data-kemasan="Kayu" data-biaya="40000">Kayu</button>
+                         </div>
+                     </div>
+
+                    
+
+                                           <div class="order-summary">
+                          <h4>Ringkasan Pesanan:</h4>
+                                                     <div class="summary-product">
+                               <div class="summary-images" id="summaryImages" style="display: none;">
+                                   <div class="product-image">
+                                       <img src="poto produk/produk tanpa nama.png" alt="Original Basic" />
+                                       <p class="image-label">Produk</p>
+                                   </div>
+                                   <div class="packaging-image">
+                                       <img src="poto produk/produk tanpa nama.png" alt="Kemasan" />
+                                       <p class="image-label">Kemasan</p>
+                                   </div>
+                               </div>
+                               <div class="summary-details">
+                                   <p>Produk: <span id="summaryProduk">Original Basic</span></p>
+                                   <p>Paket: <span id="summaryPaket">-</span></p>
+                                   <p>Pengemasan: <span id="summaryKemasan">-</span></p>
+                                   <p>Biaya Kemasan: <span id="summaryBiayaKemasan">-</span></p>
+                                   <p>Harga: <span id="summaryHarga">Pilih paket untuk melihat harga</span></p>
+                               </div>
+                           </div>
+                      </div>
+
+                                           
+                      <button class="confirm-button" onclick="window.location.href='Checkout.html'">Order Sekarang</button>
+                      <button class="confirm-button" onclick="kirimPesanan()" style="margin-top: 10px; background-color: #25d366;">Kirim Pesanan via WhatsApp</button>
+                 </form>
+             </div>
+         </div>
+     </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Jawara Cristal. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        let paketDipilih = '';
+        let kemasanDipilih = '';
+        let hargaDipilih = '';
+        let biayaKemasan = 0;
+
+        function pilihPaket(btn) {
+            document.querySelectorAll('.paket-container button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            paketDipilih = btn.getAttribute('data-paket');
+            hargaDipilih = btn.getAttribute('data-harga');
+            updateSummary();
+        }
+
+        function pilihKemasan(btn) {
+            document.querySelectorAll('.kemasan-container button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            kemasanDipilih = btn.getAttribute('data-kemasan');
+            biayaKemasan = parseInt(btn.getAttribute('data-biaya')) || 0;
+            updateSummary();
+        }
+
+        function updateSummary() {
+            document.getElementById('summaryPaket').textContent = paketDipilih || '-';
+            document.getElementById('summaryKemasan').textContent = kemasanDipilih || '-';
+            
+            // Update biaya kemasan
+            if (biayaKemasan > 0) {
+                document.getElementById('summaryBiayaKemasan').textContent = formatHarga(biayaKemasan);
+            } else {
+                document.getElementById('summaryBiayaKemasan').textContent = 'Gratis';
+            }
+            
+            // Tampilkan gambar hanya jika paket dan kemasan sudah dipilih
+            if (paketDipilih && kemasanDipilih) {
+                document.getElementById('summaryImages').style.display = 'flex';
+                updateProductImage();
+            } else {
+                document.getElementById('summaryImages').style.display = 'none';
+            }
+            
+            // Update harga dengan biaya kemasan
+            if (hargaDipilih) {
+                const totalHarga = parseInt(hargaDipilih) + biayaKemasan;
+                const hargaFormatted = formatHarga(totalHarga);
+                document.getElementById('hargaProduk').textContent = hargaFormatted;
+                document.getElementById('summaryHarga').textContent = hargaFormatted;
+            }
+        }
+
+        function updateProductImage() {
+            const productImage = document.querySelector('.product-image img');
+            const packagingImage = document.querySelector('.packaging-image img');
+            
+            // Foto produk tetap sama
+            productImage.src = 'poto produk/produk tanpa nama.png';
+            
+            // Foto kemasan berubah sesuai pilihan
+            if (kemasanDipilih === 'Kawat') {
+                packagingImage.src = 'poto produk/packing kawat.jpg';
+            } else if (kemasanDipilih === 'Kayu') {
+                packagingImage.src = 'poto produk/packing kayu.jpeg';
+            } else {
+                packagingImage.src = 'poto produk/produk tanpnama.png';
+            }
+        }
+
+        function formatHarga(harga) {
+            return 'Rp' + parseInt(harga).toLocaleString('id-ID');
+        }
+
+        function kirimPesanan() {
+            const nama = document.getElementById('nama').value;
+            const telepon = document.getElementById('telepon').value;
+            const alamat = document.getElementById('alamat').value;
+            const catatan = document.getElementById('catatan').value;
+
+            if (!nama || !telepon || !alamat) {
+                alert('Mohon lengkapi data pemesanan!');
+                return;
+            }
+
+            if (!paketDipilih || !kemasanDipilih) {
+                alert('Mohon pilih paket dan pengemasan!');
+                return;
+            }
+
+            if (!hargaDipilih) {
+                alert('Mohon pilih paket untuk melihat harga!');
+                return;
+            }
+
+            let pesan = `Halo, saya ingin memesan:\n\n`;
+            pesan += `*Produk:* Original Basic\n`;
+            pesan += `*Paket:* ${paketDipilih}\n`;
+            pesan += `*Pengemasan:* ${kemasanDipilih}`;
+            if (biayaKemasan > 0) {
+                pesan += ` (+${formatHarga(biayaKemasan)})`;
+            }
+            pesan += `\n`;
+            const totalHarga = parseInt(hargaDipilih) + biayaKemasan;
+            pesan += `*Harga:* ${formatHarga(totalHarga)}\n\n`;
+            pesan += `*Data Pemesan:*\n`;
+            pesan += `Nama: ${nama}\n`;
+            pesan += `Telepon: ${telepon}\n`;
+            pesan += `Alamat: ${alamat}\n`;
+            
+            if (catatan) {
+                pesan += `Catatan: ${catatan}\n`;
+            }
+
+            const linkWA = `https://wa.me/6281228601369?text=${encodeURIComponent(pesan)}`;
+            window.open(linkWA, '_blank');
+        }
+    </script>
+</body>
+</html>
